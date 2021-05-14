@@ -15,7 +15,7 @@ macro_rules! translate_cef_ptr {
     }};
 }
 
-unsafe extern "C" fn add_ref(ptr: *mut cef_base_ref_counted_t) {
+unsafe extern "stdcall" fn add_ref(ptr: *mut cef_base_ref_counted_t) {
     let shim = translate_cef_ptr!(ptr);
     let _count = shim.count.fetch_add(1, Relaxed);
 
@@ -27,7 +27,7 @@ unsafe extern "C" fn add_ref(ptr: *mut cef_base_ref_counted_t) {
     // );
 }
 
-unsafe extern "C" fn release(ptr: *mut cef_base_ref_counted_t) -> c_int {
+unsafe extern "stdcall" fn release(ptr: *mut cef_base_ref_counted_t) -> c_int {
     let shim = translate_cef_ptr!(ptr);
     let count = shim.count.fetch_sub(1, Release);
 
@@ -47,17 +47,17 @@ unsafe extern "C" fn release(ptr: *mut cef_base_ref_counted_t) -> c_int {
     }
 }
 
-unsafe extern "C" fn has_one_ref(_self: *mut cef_base_ref_counted_t) -> c_int {
+unsafe extern "stdcall" fn has_one_ref(_self: *mut cef_base_ref_counted_t) -> c_int {
     1
 }
 
-unsafe extern "C" fn has_at_least_one_ref(_self: *mut cef_base_ref_counted_t) -> c_int {
+unsafe extern "stdcall" fn has_at_least_one_ref(_self: *mut cef_base_ref_counted_t) -> c_int {
     1
 }
 
 pub fn init_ref_count<T>() -> cef_base_ref_counted_t {
     cef_base_ref_counted_t {
-        size: std::mem::size_of::<T>() as u64,
+        size: std::mem::size_of::<T>() as u32,
         add_ref: Some(add_ref),
         release: Some(release),
         has_one_ref: Some(has_one_ref),

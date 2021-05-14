@@ -108,13 +108,6 @@ fn main() {
 
     let mut host = browser.get_host().unwrap();
 
-    host.show_dev_tools(
-        Some(&window_info),
-        Some(client.clone()),
-        Some(&browser_settings),
-        None,
-    );
-
     cef_run_message_loop();
 
     cef_shutdown();

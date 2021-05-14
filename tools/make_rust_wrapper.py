@@ -538,7 +538,7 @@ def generate_types(writer, contents):
       writer.write_line(+1, f'impl Default for {rust_name} {{')
       writer.write_line(+1, f'fn default() -> {rust_name} {{')
       writer.write_line(f'let /* mut */ raw = {cef_binding_ns}::{extern_name}::default();')
-      writer.write_line(f'// raw.size = std::mem::size_of::<{cef_binding_ns}::{extern_name}>() as u64;')
+      writer.write_line(f'// raw.size = std::mem::size_of::<{cef_binding_ns}::{extern_name}>() as u32;')
       writer.write_line(f'{rust_name} {{ raw }}')
       writer.write_line(-1, f'}}')
       writer.write_line(-1, f'}}')
@@ -993,7 +993,7 @@ def generate_interface_func(trait_impl, unsafe_impl, func, cls, inheritence_dept
   trait_impl.write_line(f') -> {retarg.rust_type} {{ {retarg.rust_default} }}')
 
   unsafe_impl.write_line(f'#[allow(non_snake_case)]')
-  unsafe_impl.write(f'unsafe extern "C" fn {iface_name}_{func_name}(')
+  unsafe_impl.write(f'unsafe extern "stdcall" fn {iface_name}_{func_name}(')
   unsafe_impl.write(f'_self: {thisarg.extern_type}')
 
   for (name, arg) in translations:
@@ -1176,7 +1176,7 @@ def translate_type(ty, optional = False):
     element = translate_type(ty[1][1][1])
 
     # if optional: print(f'optional {ty}')
-    return type_ref_list(element, translate_type(('primitive', 'size_t', 'u64'), False), True)
+    return type_ref_list(element, translate_type(('primitive', 'size_t', 'u32'), False), True)
 
   # &mut CefStringMap
     # elif is_ref_or_ptr(ty) and ty[1][0] == 'map':

@@ -54,7 +54,7 @@ pub fn str_to_cef_string(field: &mut cef_sys::cef_string_t, value: &str) {
         field.dtor = None;
     } else {
         let v: Vec<_> = value.encode_utf16().collect();
-        field.length = v.len() as u64;
+        field.length = v.len() as u32;
         field.str_ = Box::into_raw(v.into_boxed_slice()) as *mut _;
         field.dtor = Some(string_dtor);
     }
